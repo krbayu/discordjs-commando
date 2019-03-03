@@ -204,7 +204,11 @@ module.exports = Structures.extend('Message', Message => {
 					 * @param {CommandoMessage} message - Command message that the command ran from (see {@link Command#run})
 					 */
 					this.client.emit('commandCancelled', this.command, result.cancelled, this);
-					return this.reply('Cancelled command.');
+					return this.reply('Cancelled command.').then(themsg => {
+						themsg.delete({
+							timeout: 5000
+						});
+					});
 				}
 				args = result.values;
 			}
