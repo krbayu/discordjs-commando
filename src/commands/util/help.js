@@ -31,7 +31,7 @@ module.exports = class HelpCommand extends Command {
 	async run(msg, args) { // eslint-disable-line complexity
 		const groups = this.client.registry.groups;
 		const commands = this.client.registry.findCommands(args.command, false, msg);
-		const showAll = args.command && args.command.toLowerCase() === 'all';
+		const showAll = true; // A args.command && args.command.toLowerCase() === 'all'
 		if(args.command && !showAll) {
 			if(commands.length === 1) {
 				let help = stripIndents`
@@ -82,7 +82,6 @@ module.exports = class HelpCommand extends Command {
 					To run a command in this DM, simply use ${Command.usage('command', null, null)} with no prefix.
 
 					Use ${this.usage('<command>', null, null)} to view detailed information about a specific command.
-					Use ${this.usage('all', null, null)} to view a list of *all* commands, not just available ones.
 
 					__**${showAll ? 'All commands' : `Available commands in ${msg.guild || 'this DM'}`}**__
 
