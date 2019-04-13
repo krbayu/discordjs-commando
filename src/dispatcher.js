@@ -252,6 +252,7 @@ class CommandDispatcher {
 		// Find the command to run with default command handling
 		const prefix = message.guild ? message.guild.commandPrefix : this.client.commandPrefix;
 		if(!this._commandPatterns[prefix]) this.buildCommandPattern(prefix);
+		if(!this._commandPatterns[prefix] && prefix !== this.client.commandPrefix) this.buildCommandPattern(this.client.commandPrefix);
 		let cmdMsg = this.matchDefault(message, this._commandPatterns[prefix], 2);
 		if(!cmdMsg && !message.guild) cmdMsg = this.matchDefault(message, /^([^\s]+)/i);
 		return cmdMsg;
