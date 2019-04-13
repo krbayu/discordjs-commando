@@ -186,7 +186,7 @@ class Argument {
 				`}
 			`).then(themsg => {
 				themsg.delete({
-					timeout: 5000
+					timeout: 30000
 				});
 			}));
 
@@ -279,7 +279,7 @@ class Argument {
 						`}
 					`).then(themsg => {
 						themsg.delete({
-							timeout: 5000
+							timeout: 30000
 						});
 					}));
 				} else if(results.length === 0) {
@@ -291,7 +291,7 @@ class Argument {
 						`}
 					`).then(themsg => {
 						themsg.delete({
-							timeout: 5000
+							timeout: 30000
 						});
 					}));
 				}
