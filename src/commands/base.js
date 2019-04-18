@@ -140,6 +140,13 @@ class Command {
 		this.ownerOnly = Boolean(info.ownerOnly);
 
 		/**
+		 * Whether the command can also be used by an global moderator
+		 * @type {boolean}
+		 */
+		this.modCommand = Boolean(info.modCommand);
+		this.memberData = info.memberData;
+
+		/**
 		 * Permissions required by the client to use the command.
 		 * @type {?PermissionResolvable[]}
 		 */
@@ -247,12 +254,24 @@ class Command {
 	 * @param {boolean} [ownerOverride=true] - Whether the bot owner(s) will always have permission
 	 * @return {boolean|string} Whether the user has permission, or an error message to respond with if they don't
 	 */
-	hasPermission(message, ownerOverride = true) {
+	async hasPermission(message, ownerOverride = true) {
 		if(!this.ownerOnly && !this.userPermissions) return true;
 		if(ownerOverride && this.client.isOwner(message.author)) return true;
 
 		if(this.ownerOnly && (ownerOverride || !this.client.isOwner(message.author))) {
-			return `The \`${this.name}\` command can only be used by the bot owner.`;
+			if(this.modCommand) {
+				const isMod = await this.memberData.findOne({
+					where: {
+						user: message.author.id,
+						type: 'mod'
+					}
+				});
+				if(!isMod) {
+					return `The \`${this.name}\` command can only be used by the bot owner and global moderator.`;
+				}
+			} else {
+				return `The \`${this.name}\` command can only be used by the bot owner.`;
+			}
 		}
 
 		if(message.channel.type === 'text' && this.userPermissions) {
@@ -414,10 +433,10 @@ class Command {
 	 * @param {?Message} message - The message
 	 * @return {boolean}
 	 */
-	isUsable(message = null) {
+	async isUsable(message = null) {
 		if(!message) return this._globalEnabled;
 		if(this.guildOnly && message && !message.guild) return false;
-		const hasPermission = this.hasPermission(message);
+		const hasPermission = await this.hasPermission(message);
 		return this.isEnabledIn(message.guild) && hasPermission && typeof hasPermission !== 'string';
 	}
 
